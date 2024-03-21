@@ -152,3 +152,16 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ## Acknowledgments
 
 I thank, **Dr. Toka László**, for his exceptional leadership and unwavering support during this work.
+
+
+## 问题
+执行`poetry update`时候报错：
+```text
+HTTPSConnectionPool(host='download.pytorch.org', port=443): Max retries exceeded with url:
+```
+使用本地安装whl文件：
+```shell
+pip install D:\project\carla\WindowsNoEditor_9.8\torch-1.12.0+cu113-cp37-cp37m-win_amd64.whl
+pip install D:\project\carla\WindowsNoEditor_9.8\torchvision-0.13.0+cu113-cp37-cp37m-win_amd64.whl
+pip install tensorboard==2.10.0
+```
