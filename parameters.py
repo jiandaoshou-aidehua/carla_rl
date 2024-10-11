@@ -28,9 +28,11 @@ MODEL_ONLINE = 'carla_dueling_dqn_online.pth'
 MODEL_TARGET = 'carla_dueling_dqn_target.pth'
 
 
-#Proximal Policy Optimization (hyper)parameters
-EPISODE_LENGTH = 7500
-TOTAL_TIMESTEPS = 2e6
+# 近端策略优化的超参数 Proximal Policy Optimization (hyper)parameters
+# 情节长度
+EPISODE_LENGTH = 750000
+# 总共的时间间隔
+TOTAL_TIMESTEPS = 2e10  # 设置很大会变成inf
 ACTION_STD_INIT = 0.2
 TEST_TIMESTEPS = 5e4
 PPO_LEARNING_RATE = 1e-4  

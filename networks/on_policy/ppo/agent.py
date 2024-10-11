@@ -5,13 +5,14 @@ import torch
 import torch.nn as nn
 from encoder_init import EncodeState
 from networks.on_policy.ppo.ppo import ActorCritic
-from parameters import  *
+from parameters import *
 
 device = torch.device("cpu")
 
+
 class Buffer:
     def __init__(self):
-         # Batch data
+        # Batch data
         self.observation = []  
         self.actions = []         
         self.log_probs = []     
@@ -25,10 +26,10 @@ class Buffer:
         del self.rewards[:]
         del self.dones[:]
 
+
 class PPOAgent(object):
     def __init__(self, town, action_std_init=0.4):
-        
-        #self.env = env
+        # self.env = env
         self.obs_dim = 100
         self.action_dim = 2
         self.clip = POLICY_CLIP
@@ -51,9 +52,7 @@ class PPOAgent(object):
         self.old_policy.load_state_dict(self.policy.state_dict())
         self.MseLoss = nn.MSELoss()
 
-
     def get_action(self, obs, train):
-
         with torch.no_grad():
             if isinstance(obs, np.ndarray):
                 obs = torch.tensor(obs, dtype=torch.float)
@@ -70,7 +69,6 @@ class PPOAgent(object):
         self.policy.set_action_std(new_action_std)
         self.old_policy.set_action_std(new_action_std)
 
-    
     def decay_action_std(self, action_std_decay_rate, min_action_std):
         self.action_std = self.action_std - action_std_decay_rate
         if (self.action_std <= min_action_std):
@@ -78,10 +76,8 @@ class PPOAgent(object):
         self.set_action_std(self.action_std)
         return self.action_std
 
-
     def learn(self):
-
-        # Monte Carlo estimate of returns
+        # 返回的蒙特卡洛估计
         rewards = []
         discounted_reward = 0
         for reward, is_terminal in zip(reversed(self.memory.rewards), reversed(self.memory.dones)):
@@ -90,29 +86,27 @@ class PPOAgent(object):
             discounted_reward = reward + (self.gamma * discounted_reward)
             rewards.insert(0, discounted_reward)
             
-        # Normalizing the rewards
+        # 正则化奖励
         rewards = torch.tensor(rewards, dtype=torch.float32).to(device)
         rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-7)
 
-        # convert list to tensor
+        # 将列表转为张量
         old_states = torch.squeeze(torch.stack(self.memory.observation, dim=0)).detach().to(device)
         old_actions = torch.squeeze(torch.stack(self.memory.actions, dim=0)).detach().to(device)
         old_logprobs = torch.squeeze(torch.stack(self.memory.log_probs, dim=0)).detach().to(device)
 
-        
-        # Optimize policy for K epochs
+        # 对K个时期epoch优化策略
         for _ in range(self.n_updates_per_iteration):
-
-            # Evaluating old actions and values
+            # 估计旧的动作和值
             logprobs, values, dist_entropy = self.policy.evaluate(old_states, old_actions)
 
-            # match values tensor dimensions with rewards tensor
+            # 以奖励张量匹配值张量的维度
             values = torch.squeeze(values)
             
-            # Finding the ratio (pi_theta / pi_theta__old)
+            # 找到比例 (pi_theta / pi_theta__old)
             ratios = torch.exp(logprobs - old_logprobs.detach())
 
-            # Finding Surrogate Loss
+            # 找到代理损失 Surrogate Loss
             advantages = rewards - values.detach()   
             surr1 = ratios * advantages
             surr2 = torch.clamp(ratios, 1-self.clip, 1+self.clip) * advantages
@@ -128,19 +122,21 @@ class PPOAgent(object):
         self.old_policy.load_state_dict(self.policy.state_dict())
         self.memory.clear()
 
-    
+    # 模型保存
     def save(self):
         self.checkpoint_file_no = len(next(os.walk(PPO_CHECKPOINT_DIR+self.town))[2])
         checkpoint_file = PPO_CHECKPOINT_DIR+self.town+"/ppo_policy_" + str(self.checkpoint_file_no)+"_.pth"
         torch.save(self.old_policy.state_dict(), checkpoint_file)
 
+    # 检查点保存
     def chkpt_save(self):
         self.checkpoint_file_no = len(next(os.walk(PPO_CHECKPOINT_DIR+self.town))[2])
-        if self.checkpoint_file_no !=0:
-            self.checkpoint_file_no -=1
+        if self.checkpoint_file_no != 0:
+            self.checkpoint_file_no -= 1
         checkpoint_file = PPO_CHECKPOINT_DIR+self.town+"/ppo_policy_" + str(self.checkpoint_file_no)+"_.pth"
         torch.save(self.old_policy.state_dict(), checkpoint_file)
-   
+
+    # 加载检查点的模型
     def load(self):
         self.checkpoint_file_no = len(next(os.walk(PPO_CHECKPOINT_DIR+self.town))[2]) - 1
         checkpoint_file = PPO_CHECKPOINT_DIR+self.town+"/ppo_policy_" + str(self.checkpoint_file_no)+"_.pth"

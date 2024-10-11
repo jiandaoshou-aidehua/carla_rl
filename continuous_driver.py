@@ -37,19 +37,17 @@ def parse_args():
     
     return args
 
+
 def boolean_string(s):
     if s not in {'False', 'True'}:
         raise ValueError('Not a valid boolean string')
     return s == 'True'
 
 
-
 def runner():
-
     #========================================================================
-    #                           BASIC PARAMETER & LOGGING SETUP
+    #                           基本参数 & 日志设置
     #========================================================================
-    
     args = parse_args()
     exp_name = args.exp_name
     train = args.train
@@ -72,7 +70,7 @@ def runner():
         print(e.message)
         sys.exit()
     
-    if train == True:
+    if train is True:
         writer = SummaryWriter(f"runs/{run_name}_{action_std_init}_{int(total_timesteps)}/{town}")
     else:
         writer = SummaryWriter(f"runs/{run_name}_{action_std_init}_{int(total_timesteps)}_TEST/{town}")
@@ -80,16 +78,15 @@ def runner():
         "hyperparameters",
         "|param|value|\n|-|-|\n%s" % ("\n".join([f"|{key}|{value}" for key, value in vars(args).items()])))
 
-
-    #Seeding to reproduce the results 
+    # 设置随机数种子以复现结果
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
+    # 在默认的非确定性模式下，多次执行相同的程序可能会因为内部并行计算的差异而产生略微不同的结果。
     torch.backends.cudnn.deterministic = args.torch_deterministic
 
-    
     action_std_decay_rate = 0.05
-    min_action_std = 0.05   
+    min_action_std = 0.05
     action_std_decay_freq = 5e5
     timestep = 0
     episode = 0
@@ -100,7 +97,7 @@ def runner():
     distance_covered = 0
 
     #========================================================================
-    #                           CREATING THE SIMULATION
+    #                           创建仿真
     #========================================================================
 
     try:
@@ -117,7 +114,7 @@ def runner():
 
 
     #========================================================================
-    #                           ALGORITHM
+    #                           算法
     #========================================================================
     try:
         time.sleep(0.5)
@@ -134,7 +131,7 @@ def runner():
             agent = PPOAgent(town, action_std_init)
             agent.load()
         else:
-            if train == False:
+            if train is False:
                 agent = PPOAgent(town, action_std_init)
                 agent.load()
                 for params in agent.old_policy.actor.parameters():
@@ -142,9 +139,8 @@ def runner():
             else:
                 agent = PPOAgent(town, action_std_init)
         if train:
-            #Training
+            # 执行训练
             while timestep < total_timesteps:
-            
                 observation = env.reset()
                 observation = encode.process(observation)
 
@@ -152,8 +148,7 @@ def runner():
                 t1 = datetime.now()
 
                 for t in range(args.episode_length):
-                
-                    # select action with policy
+                    # 选择带有策略的动作
                     action = agent.get_action(observation, train=True)
 
                     observation, reward, done, info = env.step(action)
@@ -164,13 +159,13 @@ def runner():
                     agent.memory.rewards.append(reward)
                     agent.memory.dones.append(done)
                     
-                    timestep +=1
+                    timestep += 1
                     current_ep_reward += reward
                     
                     if timestep % action_std_decay_freq == 0:
-                        action_std_init =  agent.decay_action_std(action_std_decay_rate, min_action_std)
+                        action_std_init = agent.decay_action_std(action_std_decay_rate, min_action_std)
 
-                    if timestep == total_timesteps -1:
+                    if timestep == total_timesteps - 1:
                         agent.chkpt_save()
 
                     # break; if the episode is over
@@ -192,7 +187,6 @@ def runner():
                     cumulative_score = ((cumulative_score * (episode - 1)) + current_ep_reward) / (episode)
                 else:
                     cumulative_score = np.mean(scores)
-
 
                 print('Episode: {}'.format(episode),', Timestep: {}'.format(timestep),', Reward:  {:.2f}'.format(current_ep_reward),', Average Reward:  {:.2f}'.format(cumulative_score))
                 if episode % 10 == 0:

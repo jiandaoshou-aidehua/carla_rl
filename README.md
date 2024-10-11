@@ -52,12 +52,12 @@ Architectural layout encapsulating the three most essential components:
 <p align="center"> Architectural Methodology</p>
 
 
-## How to Run
+## 如何运行
 
-## Running a Trained Agent
+## 运行已训练的代理
 
-With the project, we provide you two pretrained PPO agents, one for each town (Town 02 & Town 07).
-The preTrained serialized files for this model are placed in `preTrained_models/PPO/<town>` folder.
+通过该项目，我们为您提供两个预先训练过的 PPO 代理，每个城镇一个（Town 02 和 Town 07）。
+该模型已训练的序列化文件放在 `preTrained_models/PPO/<town>` 文件夹下 。
 
 ```
 python continuous_driver.py --exp-name ppo --train False
@@ -69,15 +69,17 @@ By deafult we are on Town 07 but we can changed it to Town 02 with the following
 python continuous_driver.py --exp-name ppo --train False --town Town02
 ```
 
-## Training a New Agent
+## 训练一个新的代理
 
-In order to train a new agent use the following command:
+使用以下命令训练一个新的代理：
 
 ```
 python continuous_driver.py --exp-name ppo
 ```
+训练到 Episode: 370 就退出程序？
 
 This will start training an agent with the default parameters, and checkpoints will be written to `checkpoints/PPO/<town>/` and the other metrics will be logged into `logs/PPO/<town>/`. Same as above, by default we're training on Town07 but we can change it to Town02 with this argument addition `--town Town02`.
+
 
 ### How our Training looks like.
 
