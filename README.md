@@ -40,9 +40,9 @@ Download the **CARLA server (0.9.8)** + **Additional Maps**, and make sure you'v
 * [Tensorboard](https://www.tensorflow.org/tensorboard) - Visualization toolkit
 
 
-# Methodology
+# 方法
 
-Architectural layout encapsulating the three most essential components: 
+架构布局封装了三个最重要的组件: 
 
 1. CARLA Simulation. 
 2. VAE. 

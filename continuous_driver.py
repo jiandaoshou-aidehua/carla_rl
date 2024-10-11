@@ -16,6 +16,8 @@ from simulation.connection import ClientConnection
 from simulation.environment import CarlaEnvironment
 from parameters import *
 
+import carla
+
 
 def parse_args():
     
@@ -110,12 +112,20 @@ def runner():
         env = CarlaEnvironment(client, world,town, checkpoint_frequency=None)
     encode = EncodeState(LATENT_DIM)
 
+    # 调整场景的视角到俯视（便于查看训练时车辆的完整运动）
+    if env.map.name == "Town07":
+        spectator = env.world.get_spectator()
+        location = carla.Location(x=-66.9, y=-34.1, z=270)  # 通过选中虚幻编辑器中场景中间对象的坐标来获取（需要除以100，将厘米转成米）
+        rotation = carla.Rotation(pitch=-90, yaw=0, roll=0)  # 俯仰角-90表示俯视
+        new_transform = carla.Transform(location, rotation)
+        spectator.set_transform(new_transform)
+        pass
 
     #========================================================================
     #                           算法
     #========================================================================
     try:
-        time.sleep(0.5)
+        # time.sleep(0.5)
         
         if checkpoint_load:
             chkt_file_nums = len(next(os.walk(f'checkpoints/PPO/{town}'))[2]) - 1
@@ -139,7 +149,8 @@ def runner():
         if train:
             # 执行训练
             while timestep < total_timesteps:
-                observation = env.reset()
+                print(timestep)
+                observation = env.reset()  # 重置环境
                 observation = encode.process(observation)
 
                 current_ep_reward = 0

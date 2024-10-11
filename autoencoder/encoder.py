@@ -5,6 +5,8 @@ import torch.nn as nn
 
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
+
+# 变分自编码器
 class VariationalEncoder(nn.Module):
     def __init__(self, latent_dims):  
         super(VariationalEncoder, self).__init__()
