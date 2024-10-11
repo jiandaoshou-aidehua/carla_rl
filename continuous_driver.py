@@ -61,9 +61,7 @@ def runner():
             run_name = "PPO"
         else:
             """
-            
-            Here the functionality can be extended to different algorithms.
-
+            这里的功能可以扩展到不同的算法。
             """ 
             sys.exit() 
     except Exception as e:
@@ -199,10 +197,8 @@ def runner():
                     data_obj = {'cumulative_score': cumulative_score, 'episode': episode, 'timestep': timestep, 'action_std_init': action_std_init}
                     with open(chkpt_file, 'wb') as handle:
                         pickle.dump(data_obj, handle)
-                    
-                
-                if episode % 5 == 0:
 
+                if episode % 5 == 0:
                     writer.add_scalar("Episodic Reward/episode", scores[-1], episode)
                     writer.add_scalar("Cumulative Reward/info", cumulative_score, episode)
                     writer.add_scalar("Cumulative Reward/(t)", cumulative_score, timestep)
@@ -220,7 +216,6 @@ def runner():
                     distance_covered = 0
 
                 if episode % 100 == 0:
-                    
                     agent.save()
                     chkt_file_nums = len(next(os.walk(f'checkpoints/PPO/{town}'))[2])
                     chkpt_file = f'checkpoints/PPO/{town}/checkpoint_ppo_'+str(chkt_file_nums)+'.pickle'
