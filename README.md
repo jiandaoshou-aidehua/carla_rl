@@ -161,9 +161,10 @@ I thank, **Dr. Toka László**, for his exceptional leadership and unwavering su
 ```text
 HTTPSConnectionPool(host='download.pytorch.org', port=443): Max retries exceeded with url:
 ```
-使用本地安装whl文件：
+使用本地安装whl文件([torch](https://download.pytorch.org/whl/cu113/torch-1.12.0%2Bcu113-cp37-cp37m-linux_x86_64.whl#sha256=77b89f124e0403659ee034e38b479ec1761ed72bb6d767d4339eeac2db986426) , [torchvision](https://download.pytorch.org/whl/cpu/torchvision-0.13.0%2Bcpu-cp37-cp37m-linux_x86_64.whl#sha256=dc117f0611b35fd02631788a8d9b559451776fab56617d4d01a127ab0a53c8a2) )：
 ```shell
-pip install D:\project\carla\WindowsNoEditor_9.8\torch-1.12.0+cu113-cp37-cp37m-win_amd64.whl
-pip install D:\project\carla\WindowsNoEditor_9.8\torchvision-0.13.0+cu113-cp37-cp37m-win_amd64.whl
+pip install torch-1.12.0+cu113-cp37-cp37m-win_amd64.whl
+pip install torchvision-0.13.0+cu113-cp37-cp37m-win_amd64.whl
+pip install torch  # linux
 pip install tensorboard==2.10.0
 ```

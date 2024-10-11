@@ -1,17 +1,27 @@
 import os
 import sys
 import glob
+import platform
 
 try:
-    sys.path.append(glob.glob('./carla/carla-*%d.%d-%s.egg' % (
-        sys.version_info.major,
-        sys.version_info.minor,
-        'win-amd64' if os.name == 'nt' else 'linux-x86_64'))[0])
+    if platform.system().lower() == 'windows':
+        sys.path.append(glob.glob('./carla/carla-*%d.%d-%s.egg' % (
+            sys.version_info.major,
+            sys.version_info.minor,
+            'win-amd64' if os.name == 'nt' else 'linux-x86_64'))[0])
+    elif platform.system().lower() == 'linux':
+        sys.path.append(glob.glob('./carla/carla-*%d.%d-%s.egg' %(
+            sys.version_info.major,
+            5, # sys.version_info.minor,
+            'linux-x86_64'
+        )))
+        pass
 except IndexError:
     print('Couldn\'t import Carla egg properly')
 
 import carla
 from simulation.settings import PORT, TIMEOUT, HOST
+
 
 class ClientConnection:
     def __init__(self, town):
@@ -20,7 +30,6 @@ class ClientConnection:
 
     def setup(self):
         try:
-
             # Connecting to the  Server
             self.client = carla.Client(HOST, PORT)
             self.client.set_timeout(TIMEOUT)

@@ -105,7 +105,7 @@ def runner():
         logging.error("Connection has been refused by the server.")
         ConnectionRefusedError
     if train:
-        env = CarlaEnvironment(client, world,town)
+        env = CarlaEnvironment(client, world, town)
     else:
         env = CarlaEnvironment(client, world,town, checkpoint_frequency=None)
     encode = EncodeState(LATENT_DIM)

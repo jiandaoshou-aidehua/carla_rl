@@ -3,7 +3,6 @@ import torch
 from parameters import BATCH_SIZE
 
 
-
 class ReplayBuffer(object):
     def __init__(self, max_size, observation, n_actions):
 
@@ -17,7 +16,6 @@ class ReplayBuffer(object):
         self.terminal_memory = torch.zeros(self.buffer_size, dtype=torch.bool)
 
     def save_transition(self, state, action, reward, new_state, done):
-
         index = self.counter % self.buffer_size
         self.state_memory[index] = state
         self.new_state_memory[index] = new_state
